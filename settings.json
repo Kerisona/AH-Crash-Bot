@@ -1,0 +1,9 @@
+{
+     "cmd": ":loadb crash | :fviewcam {PLAYER} crash ",
+     "blacklist": [
+          "CherishClayton",
+          888888
+     ], 
+     "cookie": "MyCookie", 
+     "browser": "Chrome"
+}

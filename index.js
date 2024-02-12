@@ -7,16 +7,15 @@ const selenium_webdriver_1 = require("selenium-webdriver");
 const robotjs_1 = __importDefault(require("robotjs"));
 const axios_1 = __importDefault(require("axios"));
 const eval_1 = __importDefault(require("eval"));
-const ini_1 = __importDefault(require("ini"));
 const node_child_process_1 = require("node:child_process");
 const promises_1 = __importDefault(require("readline/promises"));
-const pslist = require('ps-list');
-const conf = require("./.conf");
-const cmd = (ini_1.default.parse(conf))["CMD"];
-const blacklist = ini_1.default.parse(conf)["BLACKLIST"].split(",").map((s) => s.trim());
+const node_fs_1 = require("node:fs");
+const conf = JSON.parse((0, node_fs_1.readFileSync)("settings.json", "utf-8"));
+const cmd = conf["cmd"];
+const blacklist = conf["blacklist"].map((v) => v.toString().trim());
 let proxies = [];
-const cookie = (ini_1.default.parse(conf))["COOKIE"];
-const browser = (ini_1.default.parse(conf))["BROWSER"];
+const cookie = conf["COOKIE"];
+const browser = conf["BROWSER"];
 async function proxy_init() {
     let all = (await axios_1.default.get("https://raw.githubusercontent.com/TheSpeedX/PROXY-List/Master/http.txt", { responseType: 'text' })).data.split('\n').map((v, i) => all[i] = v.split(":"));
     for (let i = 0; i < 30; ++i) {
@@ -81,13 +80,7 @@ function crash(user) {
                     setTimeout(() => {
                         robotjs_1.default.typeString("/");
                         setTimeout(() => robotjs_1.default.typeString(cmd.replace("&USER", user)), 100);
-                        setTimeout(() => pslist().then((s) => {
-                            for (const pr of s) {
-                                if (pr["name"].match("Roblox")) {
-                                    (0, node_child_process_1.exec)(`taskkill /PID ${pr["pid"]} /F`);
-                                }
-                            }
-                        }), 5000);
+                        setTimeout(() => (0, node_child_process_1.exec)("taskkill /IM RobloxPlayerBeta.exe /F /T"), 5000);
                     }, 1000);
                 });
             });
@@ -117,3 +110,4 @@ function main() {
         setInterval(() => crash(blacklist[Math.floor(Math.random() * blacklist.length)]), 5000);
     });
 }
+main();

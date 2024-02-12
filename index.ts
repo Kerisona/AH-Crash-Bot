@@ -5,14 +5,15 @@ import eval from 'eval';
 import ini from 'ini'
 import {exec} from 'node:child_process';
 import readlinepromise from 'readline/promises';
-const pslist = require('ps-list')
+import {readFileSync} from 'node:fs';
 
-const conf: string = require("./.conf");
-const cmd: string = (ini.parse(conf))["CMD"]
-const blacklist: string[] = (ini.parse(conf)["BLACKLIST"] as string).split(",").map((s: string) => s.trim())
+const conf: any = JSON.parse(readFileSync("settings.json", "utf-8"));
+
+const cmd: string = conf["cmd"];
+const blacklist: string[] = conf["blacklist"].map((v: string | number) => v.toString().trim());
 let proxies: string[][] = [];
-const cookie: string = (ini.parse(conf))["COOKIE"]
-const browser: string = (ini.parse(conf))["BROWSER"]
+const cookie: string = conf["COOKIE"];
+const browser: string = conf["BROWSER"];
 
 async function proxy_init() {
      let all: string[][] = ((await axios.get("https://raw.githubusercontent.com/TheSpeedX/PROXY-List/Master/http.txt", {responseType: 'text'})).data as String).split('\n').map((v, i) => all[i] = v.split(":"))
@@ -83,13 +84,7 @@ function crash(user: string) {
                          setTimeout(() => {
                               robotjs.typeString("/");
                               setTimeout(() => robotjs.typeString(cmd.replace("&USER", user)), 100)
-                              setTimeout(() => pslist().then((s: any[]) => {
-                                   for (const pr of s) {
-                                        if ((pr["name"] as string).match("Roblox")) {
-                                             exec(`taskkill /PID ${pr["pid"]} /F`);
-                                        }
-                                   }
-                              }), 5000);
+                              setTimeout(() => exec("taskkill /IM RobloxPlayerBeta.exe /F /T"), 5000);
                          }, 1000);
                     });
                })
@@ -119,3 +114,5 @@ function main() {
                setInterval(() => crash(blacklist[Math.floor(Math.random() * blacklist.length)]), 5000);
      });
 }
+
+main();
