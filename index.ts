@@ -32,7 +32,7 @@ async function xsrf(): Promise<string> {
                     await driver.manage().addCookie({domain: "https://roblox.com", name: "RBXSECURITY", value: cookie});
                     driver.findElement({xpath: "meta"}).getAttribute("xsrf").then((xs) => {
                          res(xs);
-                    })
+                    });
                })
           } catch (err) {
                rej(err);
@@ -87,7 +87,7 @@ function crash(user: string) {
                     driver.get(`roblox://experiences/start?placeId=333164326&gameInstanceId=${srv}`).then(() => {
                          setTimeout(() => {
                               robotjs.typeString("/");
-                              setTimeout(() => robotjs.typeString(cmd.replace("&USER", user)), 100)
+                              setTimeout(() => robotjs.typeString(cmd.replace("{USER}", blacklist.join(","))), 100)
                               setTimeout(() => exec("taskkill /IM RobloxPlayerBeta.exe /F /T"), 5000);
                          }, 1000);
                     });
