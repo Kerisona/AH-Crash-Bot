@@ -8,7 +8,7 @@ import readlinepromise from 'readline/promises';
 import {readFileSync} from 'node:fs';
 
 const conf: any = JSON.parse(readFileSync("settings.json", "utf-8"));
-
+let running: boolean = false;
 const cmd: string = conf["cmd"];
 const blacklist: string[] = conf["blacklist"].map((v: string | number) => v.toString().trim());
 let proxies: string[][] = [];
@@ -56,6 +56,10 @@ async function getpfp(user: string | number): Promise<string> {
 }
 
 function crash(user: string) {
+     if (running) {
+          return;
+     }
+     running = true;
      async function callback(k: number): Promise<string> {
                return new Promise<string>(async (re, rej) => {
                     let res = await axios.get(`https://www.roblox.com/games/getgameinstancesjson?placeId=333164326&startIndex=${k}`);
@@ -88,6 +92,7 @@ function crash(user: string) {
                          }, 1000);
                     });
                })
+               running = false;
           } catch (err) {
                console.warn(err);
           }
@@ -115,4 +120,5 @@ function main() {
      });
 }
 
-main();
+if (require.main === module)
+     main();
