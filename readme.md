@@ -1,4 +1,4 @@
-# AH Crash Bot
+# Admin House Crash Bot
 
 **What is this?**        
      - This is a AH Crash bot for AH by kardeth, now open source made by Vyn    
